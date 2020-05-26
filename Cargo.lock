@@ -1087,6 +1087,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
+name = "status-bot"
+version = "0.1.0"
+dependencies = [
+ "cmd_lib",
+ "serenity",
+]
+
+[[package]]
 name = "syn"
 version = "1.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1244,14 +1252,6 @@ name = "unicode-xid"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "826e7639553986605ec5979c7dd957c7895e93eabed50ab2ffa7f6128a75097c"
-
-[[package]]
-name = "unit-bot"
-version = "0.1.0"
-dependencies = [
- "cmd_lib",
- "serenity",
-]
 
 [[package]]
 name = "unsafe-any"
