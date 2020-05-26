@@ -1,0 +1,11 @@
+[package]
+name = "unit-bot"
+version = "0.1.0"
+authors = ["Philipp Bzdok <philipp.bzdok@mailbox.org>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serenity = "0.8"
+cmd_lib = "0.7.8"
