@@ -52,20 +52,20 @@ fn create_message(id: i8) -> String {
             Ok(status) => status,
             Err(status) => String::from("Error: Cannot fetch server status!")
         };
-        String::from(format!("{}\n{}", status, TTT_COMMAND))
+        String::from(format!("`{}`\n{}", status, TTT_COMMAND))
     } else if id == 1 {
         let status = run_fun!("/home/gmodserver/gmodserver-2 details | grep -A 9 \"Server name:\" | sed -r \"s/\\x1B\\[([0-9]{{1,3}}(;[0-9]{{1,2}})?)?[mGK]//g\"");
         let status = match status {
             Ok(status) => status,
             Err(status) => String::from("Error: Cannot fetch server status!")
         };
-        String::from(format!("{}\n{}", status, PH_COMMAND))
+        String::from(format!("`{}`\n{}", status, TTT_COMMAND))
     } else {
         let status = run_fun!("/home/gmodserver/gmodserver-3 details | grep -A 9 \"Server name:\" | sed -r \"s/\\x1B\\[([0-9]{{1,3}}(;[0-9]{{1,2}})?)?[mGK]//g\"");
         let status = match status {
             Ok(status) => status,
             Err(status) => String::from("Error: Cannot fetch server status!")
         };
-        String::from(format!("{}\n{}", status, SL_COMMAND))
+        String::from(format!("`{}`\n{}", status, TTT_COMMAND))
     };
 }
