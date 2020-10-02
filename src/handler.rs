@@ -7,11 +7,11 @@ use serenity::{
 const TTT_COMMAND: &str = "`connect h2879589.stratoserver.net:27015; password <password>`";
 const PH_COMMAND: &str = "`connect h2879589.stratoserver.net:27115; password <password>`";
 const SL_COMMAND: &str = "`connect h2879589.stratoserver.net:27215; password <password>`";
-const MC_SERVER: &str = "`bte.mcs.lol`";
-const HELP: &str = "`!ttt` -> G-Unit TTT server infos.\n\
-                    `!ph` -> G-Unit Prophunt server infos.\n\
-                    `!sl` -> G-Unit Slasher server infos.\n\
-                    `!mc` -> Get the G-Unit Minecraft server address.\n";
+const MC_SERVER: &str = "`h2879589.stratoserver.net`";
+const HELP: &str = "`!ttt` -> TTT server infos.\n\
+                    `!ph` -> Prophunt server infos.\n\
+                    `!sl` -> Slasher server infos.\n\
+                    `!mc` -> Get the Minecraft server address.\n";
 
 pub struct CommandHandler;
 
