@@ -51,28 +51,28 @@ fn create_message(id: i8) -> String {
         let status = run_fun!("/home/gmodserver/gmodserver details | grep -A 9 \"Server name:\" | sed -r \"s/\\x1B\\[([0-9]{{1,3}}(;[0-9]{{1,2}})?)?[mGK]//g\"");
         let status = match status {
             Ok(status) => check_message(status),
-            Err(status) => String::from(SERVER_ERROR)
+            Err(_status) => String::from(SERVER_ERROR)
         };
         String::from(format!("`{}`\n{}", status, TTT_COMMAND))
     } else if id == 1 {
         let status = run_fun!("/home/gmodserver/gmodserver-2 details | grep -A 9 \"Server name:\" | sed -r \"s/\\x1B\\[([0-9]{{1,3}}(;[0-9]{{1,2}})?)?[mGK]//g\"");
         let status = match status {
             Ok(status) => check_message(status),
-            Err(status) => String::from(SERVER_ERROR)
+            Err(_status) => String::from(SERVER_ERROR)
         };
         String::from(format!("`{}`\n{}", status, PH_COMMAND))
     } else if id == 2 {
         let status = run_fun!("/home/gmodserver/gmodserver-3 details | grep -A 9 \"Server name:\" | sed -r \"s/\\x1B\\[([0-9]{{1,3}}(;[0-9]{{1,2}})?)?[mGK]//g\"");
         let status = match status {
             Ok(status) => check_message(status),
-            Err(status) => String::from(SERVER_ERROR)
+            Err(_status) => String::from(SERVER_ERROR)
         };
         String::from(format!("{}\n{}", status, SL_COMMAND))
     } else {
         let status = run_fun!("/usr/bin/screen -ls mc | sed -n '1,1p'");
         let status = match status {
             Ok(status) => interpret_mc_screen(status),
-            Err(status) => String::from(SERVER_ERROR)
+            Err(_status) => String::from(SERVER_ERROR)
         };
         String::from(format!("{}\n{}", status, MC_SERVER))
     };
@@ -87,8 +87,8 @@ fn check_message(msg: String) -> String {
 }
 
 fn interpret_mc_screen(msg: String) -> String {
-    return match msg {
-        String::from("There is a screen on:") => String::from("`Server online`"),
+    return match msg.as_ref() {
+        "There is a screen on:" => String::from("`Server online`"),
         _ => String::from("`Server offline`")
     }
 }
