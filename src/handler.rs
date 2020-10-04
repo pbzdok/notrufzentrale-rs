@@ -12,6 +12,7 @@ const HELP: &str = "`!ttt` -> TTT server infos.\n\
                     `!ph` -> Prophunt server infos.\n\
                     `!sl` -> Slasher server infos.\n\
                     `!mc` -> Get the Minecraft server address.\n";
+const SERVER_ERROR: &str = "`Error: Cannot fetch server status!`";
 
 pub struct CommandHandler;
 
@@ -49,23 +50,31 @@ fn create_message(id: i8) -> String {
     return if id == 0 {
         let status = run_fun!("/home/gmodserver/gmodserver details | grep -A 9 \"Server name:\" | sed -r \"s/\\x1B\\[([0-9]{{1,3}}(;[0-9]{{1,2}})?)?[mGK]//g\"");
         let status = match status {
-            Ok(status) => status,
-            Err(status) => String::from("Error: Cannot fetch server status!")
+            Ok(status) => check_message(status),
+            Err(status) => String::from(SERVER_ERROR)
         };
         String::from(format!("`{}`\n{}", status, TTT_COMMAND))
     } else if id == 1 {
         let status = run_fun!("/home/gmodserver/gmodserver-2 details | grep -A 9 \"Server name:\" | sed -r \"s/\\x1B\\[([0-9]{{1,3}}(;[0-9]{{1,2}})?)?[mGK]//g\"");
         let status = match status {
-            Ok(status) => status,
-            Err(status) => String::from("Error: Cannot fetch server status!")
+            Ok(status) => check_message(status),
+            Err(status) => String::from(SERVER_ERROR)
         };
         String::from(format!("`{}`\n{}", status, PH_COMMAND))
     } else {
         let status = run_fun!("/home/gmodserver/gmodserver-3 details | grep -A 9 \"Server name:\" | sed -r \"s/\\x1B\\[([0-9]{{1,3}}(;[0-9]{{1,2}})?)?[mGK]//g\"");
         let status = match status {
-            Ok(status) => status,
-            Err(status) => String::from("Error: Cannot fetch server status!")
+            Ok(status) => check_message(status),
+            Err(status) => String::from(SERVER_ERROR)
         };
-        String::from(format!("`{}`\n{}", status, SL_COMMAND))
+        String::from(format!("{}\n{}", status, SL_COMMAND))
     };
+}
+
+fn check_message(msg: String) -> String {
+    return if msg.is_empty() {
+        String::from(SERVER_ERROR)
+    } else {
+        msg
+    }
 }
