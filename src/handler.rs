@@ -4,6 +4,10 @@ use serenity::{
     prelude::*,
 };
 
+const SERVER_ERROR: &str = "`Error: Cannot fetch server status!`";
+const SERVER_OFFLINE: &str = "`Server offline`";
+const SERVER_ONLINE: &str = "`Server online`";
+
 const TTT_COMMAND: &str = "`connect h2879589.stratoserver.net:27015; password <password>`";
 const PH_COMMAND: &str = "`connect h2879589.stratoserver.net:27115; password <password>`";
 const SL_COMMAND: &str = "`connect h2879589.stratoserver.net:27215; password <password>`";
@@ -12,7 +16,6 @@ const HELP: &str = "`!ttt` -> TTT server infos.\n\
                     `!ph` -> Prophunt server infos.\n\
                     `!sl` -> Slasher server infos.\n\
                     `!mc` -> Minecraft server infos.\n";
-const SERVER_ERROR: &str = "`Error: Cannot fetch server status!`";
 
 pub struct CommandHandler;
 
@@ -69,9 +72,9 @@ fn create_message(id: i8) -> String {
         };
         String::from(format!("{}\n{}", status, SL_COMMAND))
     } else {
-        let status = run_fun!("/usr/bin/screen -ls mc | sed -n '1,1p'");
+        let status = run_fun!("sudo lsof -i -P -n | grep 25565");
         let status = match status {
-            Ok(status) => interpret_mc_screen(status),
+            Ok(status) => check_mc_status(status),
             Err(_status) => String::from(SERVER_ERROR)
         };
         String::from(format!("{}\n{}", status, MC_SERVER))
@@ -80,15 +83,16 @@ fn create_message(id: i8) -> String {
 
 fn check_message(msg: String) -> String {
     return if msg.is_empty() {
-        String::from(SERVER_ERROR)
+        String::from(SERVER_OFFLINE)
     } else {
         msg
     }
 }
 
-fn interpret_mc_screen(msg: String) -> String {
-    return match msg.as_ref() {
-        "There is a screen on:" => String::from("`Server online`"),
-        _ => String::from("`Server offline`")
+fn check_mc_status(msg: String) -> String {
+    return if msg.is_empty() {
+        String::from(SERVER_OFFLINE)
+    } else {
+        String::from(SERVER_ONLINE)
     }
 }
