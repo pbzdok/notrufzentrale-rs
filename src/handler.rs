@@ -11,7 +11,7 @@ const MC_SERVER: &str = "`h2879589.stratoserver.net`";
 const HELP: &str = "`!ttt` -> TTT server infos.\n\
                     `!ph` -> Prophunt server infos.\n\
                     `!sl` -> Slasher server infos.\n\
-                    `!mc` -> Get the Minecraft server address.\n";
+                    `!mc` -> Minecraft server infos.\n";
 const SERVER_ERROR: &str = "`Error: Cannot fetch server status!`";
 
 pub struct CommandHandler;
@@ -31,7 +31,7 @@ impl EventHandler for CommandHandler {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content == "!mc" {
-            if let Err(why) = msg.channel_id.say(&ctx.http, MC_SERVER) {
+            if let Err(why) = msg.channel_id.say(&ctx.http, create_message(3)) {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content == "!help" {
@@ -61,13 +61,20 @@ fn create_message(id: i8) -> String {
             Err(status) => String::from(SERVER_ERROR)
         };
         String::from(format!("`{}`\n{}", status, PH_COMMAND))
-    } else {
+    } else if id == 2 {
         let status = run_fun!("/home/gmodserver/gmodserver-3 details | grep -A 9 \"Server name:\" | sed -r \"s/\\x1B\\[([0-9]{{1,3}}(;[0-9]{{1,2}})?)?[mGK]//g\"");
         let status = match status {
             Ok(status) => check_message(status),
             Err(status) => String::from(SERVER_ERROR)
         };
         String::from(format!("{}\n{}", status, SL_COMMAND))
+    } else {
+        let status = run_fun!("/usr/bin/screen -ls mc | sed -n '1,1p'");
+        let status = match status {
+            Ok(status) => interpret_mc_screen(status),
+            Err(status) => String::from(SERVER_ERROR)
+        };
+        String::from(format!("{}\n{}", status, MC_SERVER))
     };
 }
 
@@ -76,5 +83,12 @@ fn check_message(msg: String) -> String {
         String::from(SERVER_ERROR)
     } else {
         msg
+    }
+}
+
+fn interpret_mc_screen(msg: String) -> String {
+    return match msg {
+        String::from("There is a screen on:") => String::from("`Server online`"),
+        _ => String::from("`Server offline`")
     }
 }
