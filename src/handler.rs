@@ -82,6 +82,7 @@ fn create_message(id: i8) -> String {
 }
 
 fn check_message(msg: String) -> String {
+    println!("{}", msg);
     return if msg.is_empty() {
         String::from(SERVER_OFFLINE)
     } else {
@@ -90,6 +91,7 @@ fn check_message(msg: String) -> String {
 }
 
 fn check_mc_status(msg: String) -> String {
+    println!("{}", msg);
     return if msg.is_empty() {
         String::from(SERVER_OFFLINE)
     } else {
