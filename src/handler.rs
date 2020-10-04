@@ -72,7 +72,7 @@ fn create_message(id: i8) -> String {
         };
         String::from(format!("{}\n{}", status, SL_COMMAND))
     } else {
-        let status = run_fun!("sudo lsof -i -P -n | grep 25565");
+        let status = run_fun!("/usr/bin/lsof -i -P -n | grep 25565");
         let status = match status {
             Ok(status) => check_mc_status(status),
             Err(_status) => String::from(SERVER_ERROR)
