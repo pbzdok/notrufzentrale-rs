@@ -1,24 +1,80 @@
 use std::env;
-use serenity::Client;
 
-mod handler;
+use serde::{Deserialize, Serialize};
+use serenity::async_trait;
+use serenity::client::{Client, Context, EventHandler};
+use serenity::framework::standard::{
+    CommandResult,
+    macros::{
+        command,
+        group,
+    },
+    StandardFramework,
+};
+use serenity::model::channel::Message;
+use serenity::model::gateway::Ready;
 
-fn main() {
-    // Configure the client with your Discord bot token in the environment.
-    let token = env::var("DISCORD_TOKEN")
-        .expect("Expected a token in the environment");
+#[derive(Serialize, Deserialize)]
+struct Quote {
+    quote: String
+}
 
-    // Create a new instance of the Client, logging in as a bot. This will
-    // automatically prepend your bot token with "Bot ", which is a requirement
-    // by Discord for bot users.
-    let mut client = Client::new(&token, handler::CommandHandler)
-        .expect("Error while creating client");
+#[group]
+#[commands(help, kanye)]
+struct General;
 
-    // Finally, start a single shard, and start listening to events.
-    //
-    // Shards will automatically attempt to reconnect, and will perform
-    // exponential backoff until it reconnects.
-    if let Err(why) = client.start() {
-        println!("Client error: {:?}", why);
+struct Handler;
+
+#[async_trait]
+impl EventHandler for Handler {
+    async fn ready(&self, _: Context, ready: Ready) {
+        println!("{} is connected!", ready.user.name);
     }
+}
+
+#[tokio::main]
+async fn main() {
+    let framework = StandardFramework::new()
+        .configure(|c| c.prefix("#")) // set the bot's prefix to "~"
+        .group(&GENERAL_GROUP);
+
+    // Login with a bot token from the environment
+    let token = env::var("DISCORD_TOKEN").expect("token");
+    let mut client = Client::builder(token)
+        .event_handler(Handler)
+        .framework(framework)
+        .await
+        .expect("Error creating client");
+
+    // start listening for events by starting a single shard
+    if let Err(why) = client.start().await {
+        println!("An error occurred while running the client: {:?}", why);
+    }
+}
+
+#[command]
+async fn kanye(ctx: &Context, msg: &Message) -> CommandResult {
+    let body = reqwest::get("https://api.kanye.rest")
+        .await?
+        .text()
+        .await?;
+
+    let q: Quote = serde_json::from_str(&body)?;
+
+    msg.reply(ctx, q.quote).await?;
+    Ok(())
+}
+
+#[command]
+async fn help(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.channel_id.send_message(&ctx.http, |m| {
+        m.embed(|e| {
+            e.title("Zentrale hier, wie kann ich helfen?");
+            e.description("Nutze einen der folgenden Befehle");
+            e.field("`#kanye`", "Weisheiten von Kanye", false);
+            e
+        });
+        m
+    }).await?;
+    Ok(())
 }
