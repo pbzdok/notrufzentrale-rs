@@ -1074,6 +1074,7 @@ name = "status-bot"
 version = "0.1.0"
 dependencies = [
  "cmd_lib",
+ "rand",
  "reqwest",
  "serde",
  "serde_json",
