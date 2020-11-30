@@ -1,7 +1,7 @@
 use std::env;
 
-use rand::thread_rng;
 use rand::seq::SliceRandom;
+use rand::thread_rng;
 use serde::{Deserialize, Serialize};
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
@@ -16,6 +16,12 @@ use serenity::framework::standard::{
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
 
+use crate::parse::parse_dice_str;
+use crate::roll::Rolls;
+
+mod parse;
+mod roll;
+
 #[derive(Serialize, Deserialize)]
 struct Insult {
     insult: String
@@ -29,7 +35,7 @@ struct Quote {
 const ANSWERS: [&str; 19] = ["As I see it, yes", "Yes", "No", "Very likely", "Not even close", "Maybe", "Very unlikely", "Janni's mom told me yes", "Janni's mom told me no", "Ask again later", "Better not tell you now", "Concentrate and ask again", "Don't count on it", " It is certain", "My sources say no", "Outlook good", "You may rely on it", "Very Doubtful", "Without a doubt"];
 
 #[group]
-#[commands(help, kanye, front, mm)]
+#[commands(help, kanye, front, mm, roll, roll_crit)]
 struct General;
 
 struct Handler;
@@ -59,6 +65,22 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("An error occurred while running the client: {:?}", why);
     }
+}
+
+#[command]
+async fn help(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.channel_id.send_message(&ctx.http, |m| {
+        m.embed(|e| {
+            e.title("Zentrale hier, wie kann ich helfen?");
+            e.description("Nutze einen der folgenden Befehle");
+            e.field("`#kanye`", "Weisheiten von Kanye", false);
+            e.field("`#front`", "Lass dich vom Bot fronten", false);
+            e.field("`#mm <deine Frage>`", "Frag die magische Miesmuschel", false);
+            e
+        });
+        m
+    }).await?;
+    Ok(())
 }
 
 #[command]
@@ -95,17 +117,50 @@ async fn mm(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
-async fn help(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.channel_id.send_message(&ctx.http, |m| {
-        m.embed(|e| {
-            e.title("Zentrale hier, wie kann ich helfen?");
-            e.description("Nutze einen der folgenden Befehle");
-            e.field("`#kanye`", "Weisheiten von Kanye", false);
-            e.field("`#front`", "Lass dich vom Bot fronten", false);
-            e.field("`#mm <deine Frage>`", "Frag die magische Miesmuschel", false);
-            e
-        });
-        m
-    }).await?;
-    Ok(())
+async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
+    let input = &msg.content;
+    let dice: Vec<&str> = input.split_whitespace().collect();
+    let cmd = parse_dice_str(dice[1]);
+    match cmd {
+        Ok(v) => {
+            let rolls = roll::roll_normal(&v);
+            let resp = assemble_dice_response(&rolls);
+            msg.reply(ctx, resp).await?;
+            Ok(())
+        }
+        Err(e) => {
+            msg.reply(ctx, format!("Wrong input you fool! {}", String::from(e))).await?;
+            Ok(())
+        }
+    }
+}
+
+#[command]
+async fn roll_crit(ctx: &Context, msg: &Message) -> CommandResult {
+    let input = &msg.content;
+    let dice: Vec<&str> = input.split_whitespace().collect();
+    let cmd = parse_dice_str(dice[1]);
+    match cmd {
+        Ok(v) => {
+            let rolls = roll::roll_crit(&v);
+            let resp = assemble_dice_response(&rolls);
+            msg.reply(ctx, resp).await?;
+            Ok(())
+        }
+        Err(e) => {
+            msg.reply(ctx, format!("Wrong input you fool! {}", String::from(e))).await?;
+            Ok(())
+        }
+    }
+}
+
+fn assemble_dice_response(rolls: &Rolls) -> String {
+    let roll_str: String = rolls
+        .0
+        .iter()
+        .map(|d| d.to_string())
+        .collect::<Vec<String>>()
+        .join(" + ");
+    let sum_str = rolls.0.iter().sum::<usize>().to_string();
+    [roll_str, sum_str].join(" = ")
 }
