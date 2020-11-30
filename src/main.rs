@@ -76,6 +76,8 @@ async fn help(ctx: &Context, msg: &Message) -> CommandResult {
             e.field("`#kanye`", "Weisheiten von Kanye", false);
             e.field("`#front`", "Lass dich vom Bot fronten", false);
             e.field("`#mm <deine Frage>`", "Frag die magische Miesmuschel", false);
+            e.field("`#roll <Würfel>`", "Würfel nach Standard Notation, z.B. `#roll 2d10`", false);
+            e.field("`#roll_crit <Würfel>`", "Würfel nach Standard Notation mit Crit, z.B. `#roll_crit 1d4`", false);
             e
         });
         m
