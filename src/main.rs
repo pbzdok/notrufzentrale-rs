@@ -15,6 +15,7 @@ use serenity::framework::standard::{
 };
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
+use serenity::utils::Colour;
 
 use crate::parse::parse_dice_str;
 use crate::roll::Rolls;
@@ -72,7 +73,7 @@ async fn help(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
             e.title("Zentrale hier, wie kann ich helfen?");
-            e.description("Nutze einen der folgenden Befehle");
+            e.color(Colour::DARK_TEAL);
             e.field("`#kanye`", "Weisheiten von Kanye", false);
             e.field("`#front`", "Lass dich vom Bot fronten", false);
             e.field("`#mm <deine Frage>`", "Frag die magische Miesmuschel", false);
