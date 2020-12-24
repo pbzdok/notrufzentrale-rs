@@ -1,5 +1,5 @@
 [package]
-name = "status-bot"
+name = "notrufzentrale"
 version = "0.1.0"
 authors = ["Philipp Bzdok <philipp.bzdok@mailbox.org>"]
 edition = "2018"

@@ -635,6 +635,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "notrufzentrale"
+version = "0.1.0"
+dependencies = [
+ "cmd_lib",
+ "rand",
+ "regex",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "serenity",
+ "tokio",
+]
+
+[[package]]
 name = "num-integer"
 version = "0.1.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1095,20 +1109,6 @@ name = "static_assertions"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
-
-[[package]]
-name = "status-bot"
-version = "0.1.0"
-dependencies = [
- "cmd_lib",
- "rand",
- "regex",
- "reqwest",
- "serde",
- "serde_json",
- "serenity",
- "tokio",
-]
 
 [[package]]
 name = "syn"
