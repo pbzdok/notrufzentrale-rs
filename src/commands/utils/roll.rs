@@ -3,17 +3,17 @@ use rand::{
     thread_rng,
 };
 
-use crate::parse::RollCmd;
+use crate::commands::utils::parse::RollCmd;
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct Rolls(pub Vec<usize>);
+pub struct Rolls(pub Vec<usize>);
 
-pub(crate) fn roll_normal(cmd: &RollCmd) -> Rolls {
+pub fn roll_normal(cmd: &RollCmd) -> Rolls {
     let rolls = generate_rolls(cmd);
     Rolls(rolls)
 }
 
-pub(crate) fn roll_crit(cmd: &RollCmd) -> Rolls {
+pub fn roll_critical(cmd: &RollCmd) -> Rolls {
     let mut rolls = generate_rolls(cmd);
     let num = usize::from(u8::from(cmd.num.get()));
     let size = usize::from(cmd.size);
@@ -22,7 +22,7 @@ pub(crate) fn roll_crit(cmd: &RollCmd) -> Rolls {
     Rolls(rolls)
 }
 
-pub(crate) fn generate_rolls(cmd: &RollCmd) -> Vec<usize> {
+pub fn generate_rolls(cmd: &RollCmd) -> Vec<usize> {
     let mut rng = thread_rng();
     let distribution = Uniform::new_inclusive(1, usize::from(cmd.size));
     let rolls: Vec<usize> = (0..cmd.num.get())
@@ -35,6 +35,7 @@ pub(crate) fn generate_rolls(cmd: &RollCmd) -> Vec<usize> {
 mod test {
     use std::num::NonZeroU8;
 
+    use crate::commands::utils::parse::DiceSize;
     use crate::parse::DiceSize;
 
     use super::*;
@@ -59,7 +60,7 @@ mod test {
             size: DiceSize::D6,
         };
         for _ in 0..100 {
-            let rolls = roll_crit(&cmd);
+            let rolls = roll_critical(&cmd);
             let sum: usize = rolls.0.iter().sum();
             assert!(sum > 0);
         }
@@ -73,7 +74,7 @@ mod test {
         };
         for _ in 0..100 {
             let normal_rolls = roll_normal(&cmd);
-            let crit_rolls = roll_crit(&cmd);
+            let crit_rolls = roll_critical(&cmd);
             let normal_sum: usize = normal_rolls.0.iter().sum();
             let crit_sum: usize = crit_rolls.0.iter().sum();
             assert!(crit_sum > normal_sum);
@@ -87,7 +88,7 @@ mod test {
             size: DiceSize::D6,
         };
         for _ in 0..100 {
-            let rolls = roll_crit(&cmd);
+            let rolls = roll_critical(&cmd);
             let sum: usize = rolls.0.iter().sum();
             assert!(sum > 24);
         }
@@ -115,7 +116,7 @@ mod test {
         };
         let mut random_rolls = Vec::new();
         for _ in 0..100 {
-            let rolls = roll_crit(&cmd);
+            let rolls = roll_critical(&cmd);
             let sum: usize = rolls.0.iter().sum();
             random_rolls.push(sum);
         }

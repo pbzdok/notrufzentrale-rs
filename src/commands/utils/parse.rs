@@ -4,7 +4,7 @@ use std::str::FromStr;
 use regex::Regex;
 
 #[derive(Debug, PartialEq)]
-pub(crate) enum ParseError {
+pub enum ParseError {
     InvalidDiceNumber,
     InvalidDiceSize,
     UnableToParse,
@@ -21,7 +21,7 @@ impl From<ParseError> for String {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub(crate) enum DiceSize {
+pub enum DiceSize {
     D4,
     D6,
     D8,
@@ -32,7 +32,7 @@ pub(crate) enum DiceSize {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct RollCmd {
+pub struct RollCmd {
     pub num: NonZeroU8,
     pub size: DiceSize,
 }
@@ -67,7 +67,7 @@ impl FromStr for DiceSize {
     }
 }
 
-pub(crate) fn parse_dice_str(dice_str: &str) -> Result<RollCmd, ParseError> {
+pub fn parse_dice_str(dice_str: &str) -> Result<RollCmd, ParseError> {
     // Unwrapping here is fine since we'll know at compile time whether this regular expression compiles.
     let dice_regex = Regex::new(r"^([1-9]\d*)d(\d+)$").unwrap();
     let caps = dice_regex
