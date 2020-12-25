@@ -22,7 +22,7 @@ pub fn roll_critical(cmd: &RollCmd) -> Rolls {
     Rolls(rolls)
 }
 
-pub fn generate_rolls(cmd: &RollCmd) -> Vec<usize> {
+fn generate_rolls(cmd: &RollCmd) -> Vec<usize> {
     let mut rng = thread_rng();
     let distribution = Uniform::new_inclusive(1, usize::from(cmd.size));
     let rolls: Vec<usize> = (0..cmd.num.get())

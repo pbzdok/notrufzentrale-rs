@@ -1,6 +1,5 @@
 use std::env;
 
-use serde::{Deserialize, Serialize};
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 use serenity::framework::standard::{
@@ -21,16 +20,6 @@ use commands::{
 };
 
 mod commands;
-
-#[derive(Serialize, Deserialize)]
-struct Insult {
-    insult: String
-}
-
-#[derive(Serialize, Deserialize)]
-struct Quote {
-    quote: String
-}
 
 #[group]
 #[commands(help, mm, roll, roll_crit)]
